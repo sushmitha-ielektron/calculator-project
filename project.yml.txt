@@ -1,0 +1,57 @@
+---
+project:
+  :use_test_preprocessor: FALSE
+  :use_auxiliary_dependencies: TRUE
+  :build_root: build
+ 
+environment:
+  # Add any necessary environment variables here
+ 
+paths:
+  :test:
+    - +:test/**
+    - -:test/support
+  :source:
+    - src/**
+  :support:
+    - test/support
+ 
+files:
+  :test_file_prefix: test_
+  :source_file_suffix: .c
+  :header_file_suffix: .h
+ 
+defines:
+  :commmon: &common_defines []
+  :test:
+    - *common_defines
+  :test_preprocess:
+    - *common_defines
+ 
+compiler:
+  :executable: gcc
+  :arguments:
+    - ${1}
+    - -D$: COLLECTION_DEFINES_TEST_AND_VENDOR
+    - -I"$": COLLECTION_PATHS_TEST_SUPPORT_SOURCE_INCLUDE_VENDOR
+    - -I./src
+    - -O0
+    - -g
+    - -Wall
+    - -c
+    - -o "${2}"
+  :test_file_suffix: .c
+ 
+linker:
+  :executable: gcc
+  :arguments:
+    - ${1}
+    - -o "${2}"
+    - -Wl,-Map,${2}.map
+ 
+plugins:
+  :load_paths:
+    - vendor/ceedling/plugins
+  :enabled:
+    - stdout_pretty_tests_report
+    - module_generator
